@@ -2,14 +2,33 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 
-init();
+// Mysql database connection
+// Connect to database
+const db = mysql.createConnection(
+    {
+        host: "localhost",
+        user: "root",
+        password: "dolphin4275",
+        database: "employee_db",
+    },
+);
 
-// TODO add mysql connection
+db.connect((err) => {
+    if (err) {
+        console.error('There was an error connecting to the database: ' + err.stack);
+        return;
+    }
+    console.log('Connection to employee database was successful.');
+});
 
 // Initializes program by displaying logo and main prompts
 function init() {
-    // TODO: add logo
+    // TODO: Change LOGO to better ascii art if time allows
+    console.log("########################################");
+    console.log("#           EMPLOYEE TRACKER           #");
+    console.log("########################################");
 
+    // Loads inquirer prompts
     loadMainPrompts();
 }
 
@@ -33,7 +52,7 @@ function loadMainPrompts() {
         }
         // TODO add functionality for each case
     ]).then((answer) => {
-        switch(answer.intro) {
+        switch(answer.mainPrompt) {
             case 'View All Employees':
                 break;
             case 'Add Employee':
@@ -56,4 +75,7 @@ function loadMainPrompts() {
     });
 };
 
-//TODO add functions for pprompt selections
+//TODO add functions for prompt selections
+
+
+init();
