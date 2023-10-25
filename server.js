@@ -57,8 +57,10 @@ function loadMainPrompts() {
                 viewAllEmployees();
                 break;
             case 'Add Employee':
+                addEmployee();
                 break;
             case 'Update Employee Role':
+                updateEmployeeRole()
                 break;
             case 'View All Roles':
                 break;
@@ -76,7 +78,7 @@ function loadMainPrompts() {
     });
 };
 
-//TODO add functions for prompt selections
+// Employee related functions
 
 function viewAllEmployees() {
     // Perform a SQL query to retrieve all employees from the database
@@ -90,6 +92,85 @@ function viewAllEmployees() {
         console.table(results); 
         // Return to the main menu
         loadMainPrompts(); 
+    });
+}
+
+function addEmployee() {
+    // Takes user input for new employee
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: "Enter the employee's first name:",
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: "Enter the employee's last name:",
+        },
+        {
+            type: 'input',
+            name: 'roleId',
+            message: "Enter the employee's role ID:",
+        },
+        {
+            type: 'input',
+            name: 'managerId',
+            message: "Enter the employee's manager's ID (if applicable):",
+        },
+    ]).then((answers) => {
+        const { firstName, lastName, roleId, managerId } = answers;
+
+        // If managerId is empty, set it to null
+        const managerIdValue = managerId.trim() ? managerId : null;
+
+        // Insert the new employee into the database
+        db.query(
+            'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
+            [firstName, lastName, roleId, managerId],
+            (err, results) => {
+                if (err) {
+                    console.error('Error adding employee: ' + err);
+                } else {
+                    console.log('Employee added successfully!');
+                }
+                // Return to the main menu
+                loadMainPrompts();
+            }
+        );
+    });
+}
+
+// Function to update an employee's role
+function updateEmployeeRole() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'employeeId',
+            message: "Enter the ID of the employee you want to update:",
+        },
+        {
+            type: 'input',
+            name: 'newRoleId',
+            message: "Enter the new role ID for the employee:",
+        },
+    ]).then((answers) => {
+        const { employeeId, newRoleId } = answers;
+
+        // Update the employee's role in the database
+        db.query(
+            'UPDATE employee SET role_id = ? WHERE id = ?',
+            [newRoleId, employeeId],
+            (err, results) => {
+                if (err) {
+                    console.error('Error updating employee role: ' + err);
+                } else {
+                    console.log('Employee role updated successfully!');
+                }
+                // Continue with main prompts
+                loadMainPrompts();
+            }
+        );
     });
 }
 
