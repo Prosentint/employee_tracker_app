@@ -66,13 +66,16 @@ function loadMainPrompts() {
                 updateEmployeeRole()
                 break;
             case 'Delete Employee':
-                removeEmployee();
+                deleteEmployee();
                 break;
             case 'View All Roles':
+                viewRoles();
                 break;
             case 'Add Role':
+                addRole();
                 break;
             case 'Delete Role':
+                deleteRole();
                 break;
             case 'View All Departments':
                 break;
@@ -185,7 +188,7 @@ function updateEmployeeRole() {
 }
 
 // Function to remove an employee
-function removeEmployee() {
+function deleteEmployee() {
     inquirer.prompt([
         {
             type: 'input',
@@ -215,6 +218,78 @@ function removeEmployee() {
 }
 
 // Role related functions
+
+function viewRoles() {
+    db.query('SELECT * FROM role', (err, results) => {
+        if (err) {
+            console.error('Error viewing roles: ' + err);
+        } else {
+            console.table(results);
+        }
+        // Return to main menu
+        loadMainPrompts();
+    });
+}
+
+function addRole() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'title',
+            message: "Enter the role's title:",
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: "Enter the role's salary:",
+        },
+        {
+            type: 'input',
+            name: 'departmentId',
+            message: "Enter the department ID for the role:",
+        },
+    ]).then((answers) => {
+        const { title, salary, departmentId } = answers;
+
+        db.query(
+            'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)',
+            [title, salary, departmentId],
+            (err) => {
+                if (err) {
+                    console.error('Error adding role: ' + err);
+                } else {
+                    console.log('Role added successfully!');
+                }
+                // Return to main menu
+                loadMainPrompts();
+            }
+        );
+    });
+}
+
+// Function to remove a role
+function deleteRole() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'roleId',
+            message: 'Enter the ID of the role you want to delete:',
+        },
+    ]).then((answers) => {
+        const { roleId } = answers;
+
+        db.query('DELETE FROM role WHERE id = ?', [roleId], (err) => {
+            if (err) {
+                console.error('Error deleting role: ' + err);
+            } else {
+                console.log('Role deleted successfully!');
+            }
+            // Return to main menu
+            loadMainPrompts();
+        });
+    });
+}
+
 
 
 
