@@ -54,6 +54,7 @@ function loadMainPrompts() {
     ]).then((answer) => {
         switch(answer.mainPrompt) {
             case 'View All Employees':
+                viewAllEmployees();
                 break;
             case 'Add Employee':
                 break;
@@ -76,6 +77,22 @@ function loadMainPrompts() {
 };
 
 //TODO add functions for prompt selections
+
+function viewAllEmployees() {
+    // Perform a SQL query to retrieve all employees from the database
+    const query = 'SELECT * FROM employee';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error viewing employees: ' + err);
+            return;
+        }
+        // Displays the results
+        console.table(results); 
+        // Return to the main menu
+        loadMainPrompts(); 
+    });
+}
+
 
 
 init();
