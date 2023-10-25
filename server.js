@@ -78,10 +78,13 @@ function loadMainPrompts() {
                 deleteRole();
                 break;
             case 'View All Departments':
+                viewDepartments();
                 break;
             case 'Add Department':
+                addDepartment();
                 break;
             case 'Delete Department':
+                deleteDepartment();
                 break;
             case 'Quit':
                 console.log('Good-Bye!');
@@ -287,6 +290,89 @@ function deleteRole() {
             // Return to main menu
             loadMainPrompts();
         });
+    });
+}
+
+// Department related functions
+
+// Function to view all departments
+function viewDepartments() {
+    db.query("SELECT id, name FROM department", (err, results) => {
+        if (err) {
+            console.error("Error viewing departments: " + err);
+        } else {
+            // Display departments in a tabular format
+            console.table(results);
+        }
+        // Return to main menu
+        loadMainPrompts();
+    });
+}
+
+// Function to add a department
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "Enter the department name:",
+        }
+    ]).then((answer) => {
+        const { name } = answer;
+
+        // Insert the new department into the database
+        db.query(
+            "INSERT INTO department (name) VALUES (?)",
+            [name],
+            (err, results) => {
+                if (err) {
+                    console.error("Error adding department: " + err);
+                } else {
+                    console.log("Department added successfully!");
+                }
+                // Return to main menu
+                loadMainPrompts();
+            }
+        );
+    });
+}
+
+// Function to delete a department
+function deleteDepartment() {
+    // Get a list of departments to choose from
+    db.query("SELECT id, name FROM department", (err, results) => {
+        if (err) {
+            console.error("Error fetching departments: " + err);
+        } else {
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: "departmentId",
+                    message: "Select the department to delete:",
+                    choices: results.map((department) => ({
+                        name: department.name,
+                        value: department.id,
+                    })),
+                },
+            ]).then((answer) => {
+                const { departmentId } = answer;
+
+                // Delete the selected department from the database
+                db.query(
+                    "DELETE FROM department WHERE id = ?",
+                    [departmentId],
+                    (err) => {
+                        if (err) {
+                            console.error("Error deleting department: " + err);
+                        } else {
+                            console.log("Department deleted successfully!");
+                        }
+                        // Return to main menu
+                        loadMainPrompts();
+                    }
+                );
+            });
+        }
     });
 }
 
