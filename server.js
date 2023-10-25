@@ -43,10 +43,13 @@ function loadMainPrompts() {
                 'View All Employees',
                 'Add Employee',
                 'Update Employee Role',
+                'Delete Employee',
                 'View All Roles',
                 'Add Role',
+                'Delete Role',
                 'View All Departments',
                 'Add Department',
+                'Delete Department',
                 'Quit'
             ]
         }
@@ -62,13 +65,20 @@ function loadMainPrompts() {
             case 'Update Employee Role':
                 updateEmployeeRole()
                 break;
+            case 'Delete Employee':
+                removeEmployee();
+                break;
             case 'View All Roles':
                 break;
             case 'Add Role':
                 break;
+            case 'Delete Role':
+                break;
             case 'View All Departments':
                 break;
             case 'Add Department':
+                break;
+            case 'Delete Department':
                 break;
             case 'Quit':
                 console.log('Good-Bye!');
@@ -121,13 +131,13 @@ function addEmployee() {
     ]).then((answers) => {
         const { firstName, lastName, roleId, managerId } = answers;
 
-        // If managerId is empty, set it to null
-        const managerIdValue = managerId.trim() ? managerId : null;
+         // Set managerId to null if it's blank
+         const actualManagerId = managerId.trim() === '' ? null : managerId;
 
         // Insert the new employee into the database
         db.query(
             'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
-            [firstName, lastName, roleId, managerId],
+            [firstName, lastName, roleId, actualManagerId],
             (err, results) => {
                 if (err) {
                     console.error('Error adding employee: ' + err);
@@ -167,12 +177,44 @@ function updateEmployeeRole() {
                 } else {
                     console.log('Employee role updated successfully!');
                 }
-                // Continue with main prompts
+                // Return to main menu
                 loadMainPrompts();
             }
         );
     });
 }
+
+// Function to remove an employee
+function removeEmployee() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'employeeId',
+            message: "Enter the ID of the employee you want to remove:",
+        },
+    ]).then((answer) => {
+        const employeeId = answer.employeeId;
+
+        // Delete the employee from the database
+        db.query(
+            'DELETE FROM employee WHERE id = ?',
+            [employeeId],
+            (err, results) => {
+                if (err) {
+                    console.error('Error removing employee: ' + err);
+                } else if (results.affectedRows === 0) {
+                    console.log('Employee with the provided ID not found.');
+                } else {
+                    console.log('Employee removed successfully!');
+                }
+                // Return to main menu
+                loadMainPrompts();
+            }
+        );
+    });
+}
+
+// Role related functions
 
 
 
