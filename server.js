@@ -1,17 +1,7 @@
 // Dependencies
 const inquirer = require("inquirer");
-const mysql = require("mysql2");
-
-// Mysql database connection
-// Connect to database
-const db = mysql.createConnection(
-    {
-        host: "localhost",
-        user: "root",
-        password: "dolphin4275",
-        database: "employee_db",
-    },
-);
+const db = require("./connections");
+const logo = require("./logo");
 
 db.connect((err) => {
     if (err) {
@@ -23,10 +13,7 @@ db.connect((err) => {
 
 // Initializes program by displaying logo and main prompts
 function init() {
-    // TODO: Change LOGO to better ascii art if time allows
-    console.log("########################################");
-    console.log("#           EMPLOYEE TRACKER           #");
-    console.log("########################################");
+    console.log(logo);
 
     // Loads inquirer prompts
     loadMainPrompts();

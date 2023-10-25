@@ -18,9 +18,7 @@
 
   2. Navigate to project directory in command line
 
-  3. To install dependencies, run the following command:
-
-  npm i
+  3. To install dependencies, run the following command: npm i
 
   4. Set up mysql database and execute schema.sql on database, also use seed.sql for starter data
 
@@ -32,7 +30,7 @@
 
   Visit this link to watch a demonstration of this projects functionality
   
-  [Demo Video]()
+  [Demo Video](https://drive.google.com/file/d/18CtdY3UoqY_wJuE9owiXsmsCd1DKWXtY/view)
 
   or visit this repo to view the source code
 
